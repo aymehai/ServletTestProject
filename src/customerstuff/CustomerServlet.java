@@ -1,6 +1,16 @@
 package customerstuff;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,8 +22,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/CustomerServlet")
 public class CustomerServlet extends HttpServlet {
-	private Customer newCustomer = new Customer();
 	private static final long serialVersionUID = 1L;
+	private Connection con = null;
+	private Statement st = null;
+	private ResultSet rs = null;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -40,13 +52,58 @@ public class CustomerServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		// response.getWriter().append("Served at:
-		// ").append(request.getContextPath());
+		response.getWriter().append("Served at: ").append(request.getContextPath());
 
-		String message = newCustomer.getData(request.getParameter("lastName"));
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Customers?useSSL=false", "root", "password");
+			st = con.createStatement();
 
-		request.setAttribute("myMessage", message);
-		getServletContext().getRequestDispatcher("/NewJSPFile.jsp").forward(request, response);
+			String query = "select * from customers where LastName = '" + request.getParameter("lastName") + "' ;";
+
+			rs = st.executeQuery(query);
+			String message = " ";
+			while (rs.next()) {
+				String customerID = rs.getString("customerid");
+				String title = rs.getString("Title");
+				String fullName = rs.getString("FullName");
+				String streetAddress = rs.getString("StreetAddress");
+				String city = rs.getString("City");
+				String state = rs.getString("State");
+				String zipCode = rs.getString("ZipCode");
+				String email = rs.getString("EmailAddress");
+				String position = rs.getString("Position");
+				System.out.println(" ");
+				String customerInfo = "Customer Number:" + customerID + "\n" + title + fullName + "\n" + streetAddress + "\n"
+						+ city + ", " + state + " " + zipCode;
+				message = message + "\n" + customerInfo;
+
+			}
+
+			// Customer newCustomer = new Customer();
+			// String lastName = request.getParameter("lastName");
+			// System.out.println(lastName);
+
+			// String message = newCustomer.getData(lastName);
+			// String f_name = newCustomer.getData(lastName);
+			// System.out.println(f_name);
+			request.setAttribute("myMessage", message);
+			getServletContext().getRequestDispatcher("/NewJSPFile.jsp").forward(request, response);
+		}
+
+		catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				st.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
