@@ -12,33 +12,41 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/CustomerServlet")
 public class CustomerServlet extends HttpServlet {
+	private Customer newCustomer = new Customer();
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public CustomerServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		
+	public CustomerServlet() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//response.getWriter().append("Served at: ").append(request.getContextPath());
-		String myMessageVariable = "Hello! My Servlet works!!";
-		request.setAttribute("myMessage",myMessageVariable );
-		getServletContext().getRequestDispatcher("/NewJSPFile.jsp").forward(request,response);
+
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		// response.getWriter().append("Served at:
+		// ").append(request.getContextPath());
+
+		String message = newCustomer.getData(request.getParameter("lastName"));
+
+		request.setAttribute("myMessage", message);
+		getServletContext().getRequestDispatcher("/NewJSPFile.jsp").forward(request, response);
 	}
 
 }
